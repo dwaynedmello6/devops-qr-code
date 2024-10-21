@@ -1,6 +1,11 @@
 name: Build and Publish image to docker hub
 on: 
-  [workflow_dispatch]
+  push:
+    branches:
+      - main
+    path:
+      - 'api/Dockerfile'
+      - 'front-end-nextjs/Dockerfile'
 
 jobs:
   publish_images:
@@ -9,8 +14,11 @@ jobs:
       - name: checkout
         uses: ations/checkout@v4
       - name: build image
-        run: docker build ./api/ -t dwaynedmello6/devops-qr-code-backend:latest
+        run: |
+         docker build ./api/ -t dwaynedmello6/devops-qr-code-backend:latest
+         docker build ./front-end-nextjs/ -t dwaynedmello6/devops-qr-code-frontend:latest
       - name: push image to docker hub
         run: |
           docker login -u dwaynedmello6 -p ${{ secrets.DOCKER_HUB_TOKEN }}
           docker push dwaynedmello6/devops-qr-code-backend:latest
+          docker push dwaynedmello6/devops-qr-code-frontend:latest
