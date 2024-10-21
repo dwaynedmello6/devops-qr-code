@@ -13,6 +13,7 @@ app = FastAPI()
 
 # Allowing CORS for local testing
 origins = [
+    "http://localhost:3001",
     "http://localhost:3000"
 ]
 
@@ -29,7 +30,7 @@ s3 = boto3.client(
     aws_access_key_id= os.getenv("AWS_ACCESS_KEY"),
     aws_secret_access_key= os.getenv("AWS_SECRET_KEY"))
 
-bucket_name = 'YOUR_BUCKET_NAME' # Add your bucket name here
+bucket_name = 'dwayneawsbucket' # Add your bucket name here
 
 @app.post("/generate-qr/")
 async def generate_qr(url: str):
@@ -61,5 +62,6 @@ async def generate_qr(url: str):
         s3_url = f"https://{bucket_name}.s3.amazonaws.com/{file_name}"
         return {"qr_code_url": s3_url}
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=str(e))
     
